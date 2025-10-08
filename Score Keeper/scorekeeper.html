@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="scorekeeper.css" type="text/css"/>
+</head>
+<body>
+    <div id="root" style = "text-align: center;"></div>
+    <script type="text/babel" >
+        let score = 0;
+        let wicket = 0;
+        let scoreList = [];
+        let currScore = 0;
+
+        function ScoreUpdate(num){
+            if(wicket >= 10){
+                return
+            }
+            currScore = num;
+            rootElement.render(<App />);
+        }
+
+        function clickSubmit(comment){
+            if (currScore === ""){
+                return;
+            } 
+            if(currScore == "W"){
+                wicket += 1;
+            }
+            else{
+                score += currScore;
+            }
+            scoreList.unshift(`${currScore}, ${comment}`);
+            currScore = "";
+            rootElement.render(<App />);
+        }
+
+        const App = () => {
+            const comRef = React.useRef();
+            return (
+                <>
+                    <h1>Score Keeper</h1>
+                    <h2>Score: {score}/{wicket}</h2>
+                    <button className="scoreButton" onClick = {() => ScoreUpdate(0)}>0</button>
+                    <button className="scoreButton" onClick = {() => ScoreUpdate(1)}>1</button>
+                    <button className="scoreButton" onClick = {() => ScoreUpdate(2)}>2</button>
+                    <button className="scoreButton" onClick = {() => ScoreUpdate(3)}>3</button>
+                    <button className="scoreButton" onClick = {() => ScoreUpdate(4)}>4</button>
+                    <button className="scoreButton" onClick = {() => ScoreUpdate(5)}>5</button>
+                    <button className="scoreButton" onClick = {() => ScoreUpdate(6)}>6</button>
+                    <button className="wicketButton" onClick = {() => ScoreUpdate("W")}>W</button>
+                    <br />
+                    <br />
+                    <input className="inputField" placeholder="score" value ={currScore} readOnly />&nbsp;&nbsp;&nbsp;
+                    <input className="inputField" placeholder="Commentary" ref={comRef} />&nbsp;&nbsp;&nbsp;
+                    <button className="submitButton" onClick = {() => {clickSubmit(comRef.current.value); comRef.current.value ="";}} >Submit</button>
+                    <br />
+                    <hr />
+                    <>{scoreList.map((line, index) => (
+                        <p key={index}>{line}</p>
+                    ))}
+                    </>
+
+                </>
+            );
+        };
+
+        const rootElement = ReactDOM.createRoot(document.getElementById("root"));
+        rootElement.render(<App />);
+
+    </script>
+</body>
+</html>
